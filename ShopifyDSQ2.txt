@@ -1,0 +1,45 @@
+
+1)There were 54 orders shipped by speedy express
+SELECT COUNT(*)
+from Orders 
+INNER JOIN Shippers
+ON Orders.ShipperID = Shippers.ShipperID
+WHERE Shippers.ShipperName = 'Speedy Express'
+
+2)Peacock
+
+SELECT [Employees].LastName,
+       COUNT([Orders].OrderID) 
+FROM 
+       [Employees]
+       INNER JOIN [Orders]
+ON 
+       [Employees].EmployeeID = [Orders].EmployeeID
+GROUP BY 
+       [Employees].EmployeeID
+ 
+3)	Gumbär Gummibärchen was the most ordered product in Germany
+
+WITH product_most_ordered AS
+(SELECT [Products].ProductID,
+        [Products].ProductName,
+        [Products].Unit,
+        [Products].Price,
+        SUM([OrderDetails].Quantity) AS product_quantity
+FROM 
+        [OrderDetails]
+        LEFT JOIN [Products]
+ON 
+        [OrderDetails].ProductID = [Products].ProductID
+        LEFT JOIN [Suppliers]
+ON 
+        [Products].SupplierID = [Suppliers].SupplierID
+WHERE 
+        [Suppliers].Country = 'Germany'
+GROUP BY 
+        [Products].ProductID, 
+        [Products].ProductName
+)
+SELECT * FROM product_most_ordered
+WHERE product_quantity = (SELECT MAX(product_quantity) FROM product_most_ordered)
+
